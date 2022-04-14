@@ -10,7 +10,9 @@ from sklearn.linear_model import ElasticNet
 from urllib.parse import urlparse
 import mlflow
 import mlflow.sklearn
-
+# Convert into ONNX format
+from skl2onnx import convert_sklearn
+from skl2onnx.common.data_types import FloatTensorType
 import logging
 
 logging.basicConfig(level=logging.WARN)
@@ -72,6 +74,12 @@ if __name__ == "__main__":
 
         tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
 
+        initial_type = [('float_input', FloatTensorType([None, 10]))]
+        onx = convert_sklearn(lr, initial_types=initial_type)
+        #onnx_model = onx.SerializeToString()
+        #with open("rf_iris.onnx", "wb") as f:
+            #f.write(onx.SerializeToString())
+
         # Model registry does not work with file store
         if tracking_url_type_store != "file":
 
@@ -79,6 +87,6 @@ if __name__ == "__main__":
             # There are other ways to use the Model Registry, which depends on the use case,
             # please refer to the doc for more information:
             # https://mlflow.org/docs/latest/model-registry.html#api-workflow
-            mlflow.sklearn.log_model(lr, "model", registered_model_name="ElasticnetWineModel")
+            mlflow.sklearn.log_model(onx, "model", registered_model_name="ElasticnetWineModel")
         else:
-            mlflow.sklearn.log_model(lr, "model")
+            mlflow.onnx.log_model(onx, "model")
