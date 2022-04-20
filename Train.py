@@ -52,7 +52,7 @@ if __name__ == "__main__":
 
     alpha = float(sys.argv[1]) if len(sys.argv) > 1 else 0.5
     l1_ratio = float(sys.argv[2]) if len(sys.argv) > 2 else 0.5
-
+    mlflow.set_experiment(experiment_name="mlops_one")
     with mlflow.start_run():
         lr = ElasticNet(alpha=alpha, l1_ratio=l1_ratio, random_state=42)
         lr.fit(train_x, train_y)
@@ -74,7 +74,7 @@ if __name__ == "__main__":
 
         tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
 
-        initial_type = [('float_input', FloatTensorType([None, 10]))]
+        initial_type = [('float_input', FloatTensorType([None, 11]))]
         onx = convert_sklearn(lr, initial_types=initial_type)
         #onnx_model = onx.SerializeToString()
         #with open("rf_iris.onnx", "wb") as f:
