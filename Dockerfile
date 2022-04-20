@@ -17,7 +17,7 @@ RUN pip install "dvc[s3]"   # since s3 is the remote storage
 RUN pip install -r requirements.txt
 
 # initialise dvc
-RUN dvc init --no-scm
+RUN dvc init -f --no-scm
 
 # configuring remote server in dvc
 RUN  dvc remote add -d model-store s3://testdvcml/
